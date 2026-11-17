@@ -1,0 +1,19 @@
+# Optional. Twenty does not deploy this.
+# Connecting the blueprint would publish a relay. Room codes and break/ready
+# flags would be reachable at the service URL. Vitals are not part of the protocol.
+# Leave it unused unless you mean to run your own relay.
+
+services:
+  - type: web
+    name: twenty-relay
+    runtime: node
+    plan: free
+    autoDeploy: false
+    buildCommand: npm install --prefix relay
+    startCommand: node relay/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HOST
+        value: 0.0.0.0

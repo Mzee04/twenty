@@ -1,0 +1,13 @@
+{
+  "name": "twenty-relay",
+  "private": true,
+  "version": "1.0.0",
+  "description": "In-memory room relay for Twenty. Forwards room codes and break/ready booleans only.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}

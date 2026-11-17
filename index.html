@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twenty</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%232a2420'/%3E%3C/svg%3E">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' ws: wss: http: https:; worker-src 'self' blob:;">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <p class="word">Twenty</p>
+      <p class="tag">A shared pause</p>
+    </div>
+    <div class="header-tools">
+      <p id="camera-pill" class="pill">
+        <span class="cam-dot" aria-hidden="true"></span>
+        <span id="camera-pill-text">Camera off</span>
+      </p>
+      <button id="stop-camera" type="button" hidden>Stop camera</button>
+      <p class="status" id="status">
+        <span id="status-dot" class="dot dot-idle" aria-hidden="true"></span>
+        <span id="status-label">Here</span>
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <section id="screen-consent" aria-labelledby="consent-title">
+      <p class="kicker">Before the camera</p>
+      <h1 id="consent-title">What Twenty reads, and what it does not share</h1>
+      <p class="lead">Twenty is a cue to pause when a conversation runs hot. It is not a health check. It does not diagnose, treat, or score anyone.</p>
+      <div class="split">
+        <article>
+          <h2>Read on this computer</h2>
+          <ul>
+            <li>The camera image, after you continue and start a room.</li>
+            <li>A pulse estimate. It is a 12-second average, and it can keep working while you talk.</li>
+            <li>A breathing estimate, used during the quiet pause to time a guide. Breathing is a poor guide while someone is talking, so the conversation itself watches pulse.</li>
+          </ul>
+        </article>
+        <article>
+          <h2>Stays here</h2>
+          <ul>
+            <li>The camera image. It is not recorded and not uploaded.</li>
+            <li>Pulse, breathing, and the calm minute Twenty uses as your own reference.</li>
+            <li>Which screen asked for the break. The other person is not told.</li>
+          </ul>
+        </article>
+        <article>
+          <h2>Can leave</h2>
+          <ul>
+            <li>The room code you share with the other person.</li>
+            <li>A random connection id, so the room can tell two computers apart. The other person is not shown it.</li>
+            <li>A yes or no: someone asked for a break.</li>
+            <li>A yes or no: you tapped “I’m ready”.</li>
+          </ul>
+        </article>
+      </div>
+      <h2>AI and other services</h2>
+      <p>Twenty does not send your camera, pulse, or breathing to an AI service. It does not use ChatGPT, Claude, or any other chat model while it runs. It was written with help from Cursor, an AI coding agent. Cursor is not part of the running app, and the app does not send your camera, pulse, breathing, room, or API key to Cursor.</p>
+      <p>The measurement library is Presage SmartSpectra, running on this computer. It reads the camera here and estimates pulse and breathing here. Twenty turns off the library’s extra diagnostic reports. Twenty does not use Presage’s question feature, which would send a question and the measurements off this computer. The library still sends your API key to Presage so it is allowed to run. Presage’s documentation says that check is not an upload of the video or the numbers. Practice mode, with no key, does not start the library at all.</p>
+      <p>The room connection is not an AI service. By default it stays on this computer. It receives the room code, a random connection id that the other person is not shown, and yes or no for a break and for “I’m ready.” It does not receive pulse, breathing, or video.</p>
+      <h2>What is saved, and for how long</h2>
+      <p>Frames, pulse, breathing, and your calm minute stay in memory. They are not written to a file. Quit the app, or leave the room, and they are gone. If you paste an API key into the app, it is saved in this Mac’s private settings for Twenty until you remove it. If you put the key in a <code>.env</code> file yourself, it stays in that file until you delete the file. The room connection keeps the room code and the yes/no answers in memory only, and drops them when the last person leaves.</p>
+      <h2>How to opt out</h2>
+      <p>Close this window now and the camera never starts. After you continue, Stop camera and Leave room are on screen. Do not enter a shared room address if you want the room code to stay on this computer. Remove the saved key, or delete <code>.env</code>, to stop the Presage check. There is no switch that turns telemetry or an AI feature on. Twenty never turns them on.</p>
+      <p class="fine" id="key-line">No API key is loaded. You can still walk the screens with practice signals, or paste a key on the next screen. The key is not shown again.</p>
+      <button id="agree" type="button">I understand — keep going</button>
+    </section>
+
+    <section id="screen-lobby" hidden aria-labelledby="lobby-title">
+      <p class="kicker">Two people, two screens</p>
+      <h1 id="lobby-title">Start a room, or join one</h1>
+      <p class="lead">Each person runs Twenty on their own laptop, in the same room or on a call. The other screen never sees your pulse.</p>
+      <div class="lobby-grid">
+        <div class="stack">
+          <button id="start-room" type="button">Start a room</button>
+          <p class="fine">You will get a four-character code to read aloud.</p>
+        </div>
+        <form id="join-form" class="stack">
+          <label for="code-input">Room code</label>
+          <input id="code-input" autocomplete="off" autocapitalize="characters" maxlength="4" spellcheck="false" placeholder="K7MQ">
+          <button id="join-room" type="button">Join</button>
+          <p id="join-error" class="fine" role="status"></p>
+        </form>
+      </div>
+      <div class="solo-block">
+        <button id="solo" type="button" class="secondary">Solo demo</button>
+        <label class="check"><input id="partner-calm" type="checkbox"> Demo partner stays calm</label>
+        <p class="fine">The other person is a simulated recording, labeled the whole time. With an API key, your camera stays live. Without one, your side uses practice signals and the camera stays off.</p>
+      </div>
+      <div id="key-box" class="solo-block" hidden>
+        <h2>Presage API key</h2>
+        <p class="fine">Paste the key here. It stays on this Mac, is not shown again, and is not sent to the other person. Do not paste it into chat or a screenshot.</p>
+        <input id="api-key" class="secret" type="password" autocomplete="off" spellcheck="false" autocapitalize="off">
+        <button id="save-key" type="button">Save key on this computer</button>
+      </div>
+      <p id="key-save-note" class="fine" role="status"></p>
+      <button id="change-key" type="button" class="text" hidden>Use a different key</button>
+      <button id="remove-key" type="button" class="text" hidden>Remove saved key</button>
+      <p id="relay-note" class="fine"></p>
+    </section>
+
+    <section id="screen-room" hidden aria-labelledby="phase-title">
+      <p id="mode-banner" class="banner soft" hidden></p>
+      <div class="room-top">
+        <p class="code" id="room-code">····</p>
+        <button id="copy-code" type="button" class="text">Copy code</button>
+        <button id="leave" type="button" class="text">Leave room</button>
+      </div>
+      <p id="peer-line" class="fine">Just you in this room so far.</p>
+      <div class="stage">
+        <div class="preview-wrap">
+          <video id="preview" autoplay muted playsinline hidden></video>
+          <p id="preview-fallback">Camera off</p>
+        </div>
+        <div class="copy">
+          <p id="phase-kicker" class="kicker"></p>
+          <h1 id="phase-title"></h1>
+          <p id="phase-body"></p>
+          <p id="hint" class="hint" hidden></p>
+          <p id="note" class="note" hidden></p>
+          <progress id="baseline-progress" max="60000" value="0" hidden></progress>
+          <p id="pulse-readout" class="pulse">
+            <span id="pulse-value">—</span>
+            <span id="pulse-caption"></span>
+          </p>
+          <div id="pacer" hidden>
+            <div id="pacer-orb"></div>
+            <p id="pacer-label">In</p>
+            <p id="timer">20:00</p>
+            <p id="pacer-caption" class="fine"></p>
+          </div>
+          <div class="actions">
+            <button id="timeout" type="button">Timeout</button>
+            <button id="ready" type="button" hidden>I'm ready</button>
+            <button id="partner-ready" type="button" class="secondary" hidden>Mark demo partner ready</button>
+            <button id="start-camera" type="button" class="secondary" hidden>Start camera</button>
+          </div>
+        </div>
+      </div>
+      <p id="banner" class="banner" hidden></p>
+      <p id="banner-detail" class="fine" hidden></p>
+      <button id="retry" type="button" class="secondary" hidden>Try again</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>Wellness cue only. Not a medical device. The twenty minutes follow John Gottman’s rough figure for a heated conversation — a pulse near 100, then a pause. Twenty borrows the pause. It does not decide how anyone is doing.</p>
+  </footer>
+  <div id="live" class="sr" aria-live="polite"></div>
+  <script src="dist/renderer.bundle.js"></script>
+</body>
+</html>

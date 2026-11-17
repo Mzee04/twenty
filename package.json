@@ -1,0 +1,98 @@
+{
+  "name": "twenty",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A shared twenty-minute pause when a conversation runs hot.",
+  "main": "main.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:preview": "node scripts/build.js --preview",
+    "start": "npm run build && node scripts/start.js",
+    "preview": "npm run build:preview && node scripts/preview-server.js",
+    "relay": "node relay/server.js",
+    "test": "node --test test/*.test.js",
+    "dist:mac": "npm run build && electron-builder --mac --arm64",
+    "dist:mac:unsigned": "node scripts/dist-mac-unsigned.js",
+    "dist:win": "npm run build && electron-builder --win --x64"
+  },
+  "dependencies": {
+    "@smartspectra/node-sdk": "3.5.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "electron": "43.8.1",
+    "electron-builder": "^26.6.0",
+    "esbuild": "^0.25.0"
+  },
+  "build": {
+    "appId": "com.twenty.pause",
+    "productName": "Twenty",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "src/**",
+      "relay/server.js",
+      "relay/package.json",
+      "dist/renderer.bundle.js",
+      "node_modules/**",
+      "!node_modules/@smartspectra/node-sdk-*/**",
+      "!node_modules/@smartspectra/node-sdk/scripts/**",
+      "!node_modules/@smartspectra/node-sdk/test/**",
+      "!node_modules/@smartspectra/node-sdk/samples/**",
+      "!node_modules/@smartspectra/node-sdk/prebuilds/**",
+      "!relay/node_modules/**"
+    ],
+    "asar": true,
+    "mac": {
+      "category": "public.app-category.lifestyle",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["arm64"]
+        }
+      ],
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSCameraUsageDescription": "Twenty uses the camera on this Mac to estimate pulse and breathing for a shared pause. Video stays on this computer.",
+        "NSCameraUseContinuityCameraDeviceType": true
+      },
+      "extraResources": [
+        {
+          "from": "node_modules/@smartspectra/node-sdk-darwin-${arch}/",
+          "to": "smartspectra"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "zip", "arch": ["x64"] }
+      ],
+      "extraResources": [
+        {
+          "from": "node_modules/@smartspectra/node-sdk-win32-${arch}/",
+          "to": "smartspectra"
+        }
+      ]
+    },
+    "linux": {
+      "target": "AppImage",
+      "extraResources": [
+        {
+          "from": "node_modules/@smartspectra/node-sdk-linux-${arch}/",
+          "to": "smartspectra"
+        }
+      ]
+    }
+  }
+}

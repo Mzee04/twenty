@@ -1,0 +1,8 @@
+node_modules/
+relay/node_modules/
+dist/
+release/
+.env
+twenty.config.json
+*.log
+.DS_Store

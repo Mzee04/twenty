@@ -1,0 +1,29 @@
+Twenty on Windows (64-bit)
+
+SmartSpectra 3.5.0 includes a native Windows build (@smartspectra/node-sdk-win32-x64). A live camera needs that package, which npm install downloads.
+
+1. Install Node.js 20 or newer from https://nodejs.org (the Windows 64-bit installer).
+2. Open Command Prompt or PowerShell in this project folder.
+3. Paste these two lines. They do not contain an API key.
+
+   npm install
+   npm start
+
+4. Read the first screen. Click "I understand — keep going".
+5. Paste your Presage key into the box labeled Presage API key.
+   Click "Save key on this computer".
+   The box hides the key. Twenty does not show it again.
+   Do not paste the key into the terminal, chat, email, or a screenshot.
+6. When Windows asks for the camera, click Allow.
+   If you missed it: Settings, Privacy & security, Camera, and allow Twenty (or Electron, while you are running npm start).
+7. Click Solo demo to try it on your own, or Start a room and read the four-character code to the other person.
+
+You can skip the key. The home screen then says the numbers are practice signals and the camera stays off.
+
+A key you save in the app is stored at:
+%APPDATA%\Twenty\twenty.config.json
+Remove it with "Remove saved key" on the home screen. "Use a different key" opens the box again.
+
+If the camera does not start, read the Details line in the window. The same error is printed in the terminal as:
+[twenty] camera start failed
+That line does not include the key.

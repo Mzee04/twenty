@@ -1,0 +1,27 @@
+Twenty on your Mac (Apple chip)
+
+This app is not signed. macOS will ask before it runs. That is expected.
+
+1. Unzip the download if Finder did not already.
+2. Find Twenty.app.
+3. Hold Control and click Twenty.app. Choose Open.
+4. Click Open in the dialog.
+   If you only see a message that the app cannot be opened: open System Settings, go to Privacy & Security, scroll down, and click Open Anyway. Then try Control-click Open once more.
+   If it still will not open: open Terminal, type
+   xattr -dr com.apple.quarantine
+   then a space, then drag Twenty.app onto the Terminal window, and press Return.
+   That line does not contain your API key. Do not type the key there.
+5. When macOS asks for the camera, click Allow.
+   If you missed it: System Settings → Privacy & Security → Camera → turn Twenty on.
+6. Read the first screen. Click “I understand — keep going”.
+7. Paste your Presage API key into the box labeled Presage API key.
+   Click “Save key on this Mac”.
+   The box hides the key. Twenty does not show it again.
+   Do not paste the key into Terminal, chat, email, or a screenshot.
+8. Click Solo demo to try it on your own, or Start a room and read the four-character code to the other person.
+
+You can skip the key. Solo demo will say the numbers are practice signals and the camera stays off.
+
+To remove the key later: on the home screen, click “Remove saved key”.
+
+The camera light is on only while the header says Camera on. Stop camera turns it off.
