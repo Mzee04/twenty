@@ -22,15 +22,13 @@ It is a wellness cue. It is not a medical device.
 
 ## Demo
 
-Record from `DEMO-SCRIPT.md` (about two and a half minutes) and paste the link here before publishing.
+{% embed https://youtu.be/GIfL6IVMOtY %}
 
-Demo video: TODO
-
-The video should show the consent screen, a live pulse number from the SDK, the camera-on indicator, and both screens (or the solo demo, clearly labeled) on the break color. Do not show an API key.
+The video walks the consent screen, the Solo demo (the partner is a simulated recording, labeled the whole time), a live pulse from the SDK during the calm reading, the reading pausing when I look away, and **Timeout** opening the twenty-minute break with the breathing guide. My face is blurred in the edit; the app shows it unblurred, only on my own screen.
 
 ## Code
 
-Repository: TODO (this project was built in private; publish the repo before submitting)
+Repository: https://github.com/Mzee04/twenty
 
 Setup, from a fresh clone, with Node 20 or newer:
 
@@ -85,7 +83,7 @@ Anything else, including fields named like pulse, breathing, video, name, or who
 
 ### What is stored, where, and for how long
 
-- Camera frames, pulse, breathing, confidence, and the calm-minute baseline are kept in memory. Twenty does not write them to a file. They are dropped when you leave the room or quit.
+- Camera frames, pulse, breathing, confidence, and the calm reading are kept in memory. Twenty does not write them to a file. They are dropped when you leave the room or quit.
 - An API key you type into the app is written to `twenty.config.json` inside the app’s private settings folder, mode `0600` where the system allows it. On a Mac that folder is `~/Library/Application Support/Twenty/`. On Windows it is `%APPDATA%\Twenty\`. It stays there until you click **Remove saved key**. **Use a different key** opens the box again. The app does not print the key. The window is context-isolated with Node disabled in the page. Sandbox is off only so the SmartSpectra preload can load.
 - A key you put in `.env` or in a project `twenty.config.json` stays in that file until you delete it. Both files are gitignored. The shell environment overrides the files. None of these copies are sent to the relay.
 - The relay keeps the room in memory and deletes it when the last person disconnects. It has no database.
@@ -106,6 +104,8 @@ Not a medical device. Not a diagnosis. The twenty minutes and the “near 100”
 
 ## Prize Categories
 
-Best Thoughtful Real-World Use
+Best Thoughtful Real-World Use, and Most Creative or Delightful Use
 
 The need is ordinary: two people in an argument who would both do better with twenty quiet minutes, and who should not have to accuse each other to get them. The app is built around that — consent before the camera, vitals that stay on the laptop, a break that does not name anyone, a manual timeout, and a way to stop the camera in one tap.
+
+Most Creative or Delightful Use: most pulse apps watch one person. Twenty uses SmartSpectra between two people, and turns a live heart rate into a shared, blame-free pause instead of a number on a chart.
