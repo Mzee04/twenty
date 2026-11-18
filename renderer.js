@@ -38,7 +38,7 @@ const state = {
   bannerRetry: false,
   relayDown: false,
   pulseAvailable: true,
-  timings: { baselineMs: 60000, sustainMs: 20000, shortened: false },
+  timings: { baselineMs: 30000, sustainMs: 20000, shortened: false },
   detector: null,
   session: null,
   peer: null,
@@ -63,7 +63,7 @@ function readTimings(practice) {
     && baseline >= 5 && baseline <= 30
     && sustain >= 3 && sustain <= 20;
   return {
-    baselineMs: shortened ? baseline * 1000 : 60000,
+    baselineMs: shortened ? baseline * 1000 : 30000,
     sustainMs: shortened ? sustain * 1000 : 20000,
     shortened,
   };
@@ -166,7 +166,7 @@ function render() {
     mode.push('Practice room. These numbers are not a camera measurement, and the camera is off.');
   }
   if (state.timings.shortened) {
-    mode.push('Practice timings are shortened on this page. The app itself uses a 60 second baseline, a 20 second cue, and a 20 minute pause.');
+    mode.push('Practice timings are shortened on this page. The app itself uses a 30 second baseline, a 20 second cue, and a 20 minute pause.');
   }
   if (!state.pulseAvailable) {
     mode.push('This API key cannot read pulse. A manual timeout and the breathing guide still work.');
@@ -211,12 +211,12 @@ function render() {
     body = 'Nothing is being read. You can start it again, or call a timeout without it.';
   } else if (nowPhase === 'baseline') {
     kicker = 'A calm reference';
-    title = 'A quiet minute, for you';
-    const seconds = snap ? Math.min(60, Math.round(snap.baselineMs / 1000)) : 0;
+    title = 'A quiet moment, for you';
     const target = Math.round(state.timings.baselineMs / 1000);
+    const seconds = snap ? Math.min(target, Math.round(snap.baselineMs / 1000)) : 0;
     body = state.timings.shortened
       ? `Practice baseline, ${seconds} of ${target} seconds. Talking is fine.`
-      : 'Twenty is taking a calm pulse for you alone. Talking is fine. If the picture is unclear, this minute waits.';
+      : 'Twenty is taking a calm pulse for you alone. Talking is fine. About 30 seconds. If the picture is unclear, it waits.';
     $('baseline-progress').hidden = false;
     $('baseline-progress').max = state.timings.baselineMs;
     $('baseline-progress').value = snap ? snap.baselineMs : 0;

@@ -2,7 +2,7 @@
 
 A shared pause when a conversation runs hot.
 
-Each person runs Twenty on their own laptop, in the same room or on a video call, and joins a short room code. After a calm minute, if anyone's pulse stays well above their own baseline or near 100 beats per minute for about 20 seconds, both screens say **Someone needs a break**. They do not say who. A 20-minute guide follows. Each person taps **I'm ready**. A **Timeout** button is always there.
+Each person runs Twenty on their own laptop, in the same room or on a video call, and joins a short room code. After a calm half minute, if anyone's pulse stays well above their own baseline or near 100 beats per minute for about 20 seconds, both screens say **Someone needs a break**. They do not say who. A 20-minute guide follows. Each person taps **I'm ready**. A **Timeout** button is always there.
 
 This is a wellness cue, not a medical device. It does not diagnose, treat, or score anyone.
 
@@ -107,7 +107,7 @@ Use the relay machine's LAN address. The relay keeps rooms in memory and drops t
 
 1. Read the consent screen. The camera is still off.
 2. **I understand — keep going**, then **Start a room** or **Join** with the four-character code. That is the whole path.
-3. Sit for about a minute of confident readings. Talking is fine. If the SDK says the framing or light is off, the minute waits.
+3. Sit for about 30 seconds of confident readings. Talking is fine. If the SDK says the framing or light is off, the minute waits.
 4. Talk. **Timeout** is always available.
 5. On a break, both screens use the same background (`#e6d2c3`). Follow the breath guide. Tap **I'm ready**. The room opens again only after the timer and both ready taps.
 6. **Stop camera** turns the camera off. The indicator in the header is the camera state. **Leave room** drops the session.
@@ -162,7 +162,7 @@ The pause cue runs on each machine. Pulse and breathing never enter the relay. S
 
 SmartSpectra's pulse is a 12-second average, valid from 40 to 110 BPM, and the model card does not list talking as a failure (breathing does). Twenty uses pulse for the cue.
 
-- About 60 seconds of confident, in-frame samples set a baseline. The baseline is the median.
+- About 30 seconds of confident, in-frame samples set a baseline. The SDK sends some breathing-only updates with no pulse in them; Twenty holds the last real pulse for up to 3 seconds so those updates do not pause the baseline. The baseline is the median.
 - A minute whose median is already near 100 is discarded and started over. It is not a calm reference.
 - After that, the cue fires when a confident pulse stays at or above the baseline plus 15 BPM, or at or above 96 BPM, for 20 seconds.
 - Confidence is the SDK's 0–100 scale. Twenty acts at 60 or higher, and only when `stable` is true. Early zeros, while the 12-second window fills, do not count.

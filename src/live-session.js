@@ -4,6 +4,7 @@ const { framingPausesPulse, chestOk } = require('./validation');
 const { explainSdkError } = require('./sdk-errors');
 const { restoreContinuousCamera } = require('./camera-controls');
 const { openCamera } = require('./camera-start');
+const { createPulseHold } = require('./pulse-hold');
 
 function asNumber(value) {
   if (value == null) return null;
@@ -58,11 +59,12 @@ function createLiveSession(options) {
   let stopped = false;
   let cardioRetried = false;
   let validation = { code: null, hint: '' };
+  const holdPulse = createPulseHold();
 
   function emit(decoded) {
     const pulse = last(decoded && decoded.cardio && decoded.cardio.pulseRate);
     const breath = last(decoded && decoded.breathing && decoded.breathing.rate);
-    options.onReading({
+    options.onReading(holdPulse({
       tMs: Date.now(),
       pulse: asNumber(pulse && pulse.value),
       confidence: asNumber(pulse && pulse.confidence) ?? 0,
@@ -75,7 +77,7 @@ function createLiveSession(options) {
       hint: validation.hint || '',
       validationCode: validation.code,
       practice: false,
-    });
+    }));
   }
 
   function build(breathingOnly) {
