@@ -88,6 +88,8 @@ test('a minute already near 100 is not kept as the calm reference', () => {
   assert.equal(snap.baseline, null);
   assert.equal(snap.flooded, false);
   assert.equal(snap.restartedBaseline, true);
+  assert.equal(snap.restartReason, 'high');
+  assert.equal(snap.lastRejectedMedian, 100);
 });
 
 test('well above baseline fires at 20 seconds and not at 19', () => {
@@ -245,4 +247,56 @@ test('warmup samples with zero confidence do not fill the baseline', () => {
   }
   assert.equal(last.phase, 'baselining');
   assert.equal(last.baselineMs, 0);
+});
+
+test('a 15 second baseline pause restarts with reason pause, not a high median', () => {
+  const det = createFloodingDetector();
+  run(det, 0, 30000, 70);
+  let snap;
+  let reason = null;
+  let rejected = null;
+  for (let t = 31000; t <= 50000; t += 1000) {
+    snap = det.push(good(t, 70, { framingOk: false }));
+    if (snap.restartedBaseline) {
+      reason = snap.restartReason;
+      rejected = snap.lastRejectedMedian;
+    }
+  }
+  assert.equal(reason, 'pause');
+  assert.equal(rejected, null);
+  assert.equal(snap.lastRejectedMedian, null);
+  assert.equal(snap.phase, 'baselining');
+  assert.equal(snap.baseline, null);
+});
+
+test('a 4 second hole in the calm minute restarts with reason gap, not a high median', () => {
+  const det = createFloodingDetector();
+  run(det, 0, 20000, 70);
+  const snap = det.push(good(25000, 70));
+  assert.equal(snap.restartedBaseline, true);
+  assert.equal(snap.restartReason, 'gap');
+  assert.equal(snap.lastRejectedMedian, null);
+  assert.equal(snap.phase, 'baselining');
+  assert.equal(snap.baseline, null);
+});
+
+test('acceptBaseline keeps a rejected high minute and moves to listening', () => {
+  const det = createFloodingDetector();
+  const rejected = run(det, 0, 60000, 100);
+  assert.equal(rejected.restartReason, 'high');
+  assert.equal(rejected.lastRejectedMedian, 100);
+  const snap = det.acceptBaseline();
+  assert.equal(snap.phase, 'listening');
+  assert.equal(snap.baseline, 100);
+  assert.equal(snap.restartedBaseline, false);
+  assert.equal(snap.restartReason, null);
+  assert.equal(snap.lastRejectedMedian, null);
+});
+
+test('acceptBaseline without a rejected median stays in baselining', () => {
+  const det = createFloodingDetector();
+  run(det, 0, 20000, 70);
+  const snap = det.acceptBaseline();
+  assert.equal(snap.phase, 'baselining');
+  assert.equal(snap.baseline, null);
 });

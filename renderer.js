@@ -265,6 +265,9 @@ function render() {
     : 'A steady pace, about six breaths a minute.';
 
   $('timeout').hidden = nowPhase === 'break';
+  const offerAccept = nowPhase === 'baseline' && snap && snap.lastRejectedMedian != null;
+  $('accept-baseline').hidden = !offerAccept;
+  $('start-again').hidden = nowPhase !== 'baseline' && nowPhase !== 'paused';
   $('ready').hidden = nowPhase !== 'break';
   $('ready').textContent = state.youReady ? 'Not yet' : "I'm ready";
   $('ready').setAttribute('aria-pressed', state.youReady ? 'true' : 'false');
@@ -398,7 +401,14 @@ function onReading(reading) {
   });
   state.snap = snap;
   if (snap.restartedBaseline) {
-    state.note = 'That minute was already quite high, so it was not kept as a calm reference. It will start again. You can call a timeout any time.';
+    if (snap.restartReason === 'high') {
+      const bpm = snap.lastRejectedMedian != null ? Math.round(snap.lastRejectedMedian) : null;
+      state.note = bpm
+        ? `That minute sat around ${bpm} BPM, which Twenty treats as already high (96 or above), so it was not kept as a calm reference. You can use this minute anyway, start again, or call a timeout.`
+        : 'That minute was already quite high, so it was not kept as a calm reference. You can use this minute anyway, start again, or call a timeout.';
+    } else if (snap.restartReason === 'gap' || snap.restartReason === 'pause') {
+      state.note = 'The calm minute was interrupted, so it is starting over. You can call a timeout any time.';
+    }
   } else if (snap.phase === 'listening') {
     state.note = '';
   }
@@ -654,6 +664,19 @@ $('timeout').addEventListener('click', () => {
   if (state.breakOn || state.breakSent) return;
   state.breakSent = true;
   send({ v: 1, type: 'break', on: true });
+});
+$('accept-baseline').addEventListener('click', () => {
+  if (!state.detector) return;
+  state.snap = state.detector.acceptBaseline();
+  state.note = '';
+  render();
+});
+$('start-again').addEventListener('click', () => {
+  if (!state.detector) return;
+  state.detector.reset();
+  state.snap = state.detector.snapshot();
+  state.note = '';
+  render();
 });
 $('ready').addEventListener('click', () => {
   send({ v: 1, type: 'ready', on: !state.youReady });

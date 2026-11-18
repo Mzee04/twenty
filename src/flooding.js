@@ -54,6 +54,8 @@ function createFloodingDetector(options = {}) {
   let paused = false;
   let pauseReason = null;
   let restartedBaseline = false;
+  let restartReason = null;
+  let lastRejectedMedian = null;
 
   function clearBaselineCollection() {
     baselineSamples = [];
@@ -73,6 +75,8 @@ function createFloodingDetector(options = {}) {
       paused,
       pauseReason,
       restartedBaseline,
+      restartReason,
+      lastRejectedMedian,
       elevatedMs,
       baselineMs: baselineAccumMs,
       clearMs,
@@ -111,6 +115,7 @@ function createFloodingDetector(options = {}) {
     if (phase === 'baselining' && pauseMs > opts.maxBaselinePauseMs) {
       clearBaselineCollection();
       pauseMs = 0;
+      restartReason = 'pause';
       return true;
     }
     return false;
@@ -133,7 +138,9 @@ function createFloodingDetector(options = {}) {
         const med = median(baselineSamples);
         if (med >= opts.nearBpm) {
           // A minute that was already near 100 is not a calm reference.
+          lastRejectedMedian = med;
           clearBaselineCollection();
+          restartReason = 'high';
           return true;
         }
         baseline = med;
@@ -141,6 +148,8 @@ function createFloodingDetector(options = {}) {
         elevatedMs = 0;
         clearMs = 0;
         flooded = false;
+        lastRejectedMedian = null;
+        restartReason = null;
       }
       return false;
     }
@@ -179,6 +188,7 @@ function createFloodingDetector(options = {}) {
       lastT = t;
       restarted = absorb(sample, 0);
       restartedBaseline = restarted;
+      if (!restarted) restartReason = null;
       return snapshot();
     }
 
@@ -193,6 +203,7 @@ function createFloodingDetector(options = {}) {
       if (phase === 'baselining') {
         clearBaselineCollection();
         restarted = true;
+        restartReason = 'gap';
       } else if (!flooded) {
         elevatedMs = 0;
         clearMs = 0;
@@ -203,6 +214,24 @@ function createFloodingDetector(options = {}) {
     }
     if (absorb(sample, dt)) restarted = true;
     restartedBaseline = restarted;
+    if (!restarted) restartReason = null;
+    return snapshot();
+  }
+
+  function acceptBaseline(bpm) {
+    const value = typeof bpm === 'number' && Number.isFinite(bpm) ? bpm : lastRejectedMedian;
+    if (typeof value !== 'number' || !Number.isFinite(value)) return snapshot();
+    baseline = value;
+    phase = 'listening';
+    elevatedMs = 0;
+    clearMs = 0;
+    flooded = false;
+    paused = false;
+    pauseReason = null;
+    pauseMs = 0;
+    restartedBaseline = false;
+    restartReason = null;
+    lastRejectedMedian = null;
     return snapshot();
   }
 
@@ -214,9 +243,11 @@ function createFloodingDetector(options = {}) {
     paused = false;
     pauseReason = null;
     restartedBaseline = false;
+    restartReason = null;
+    lastRejectedMedian = null;
   }
 
-  return { push, snapshot, reset, options: opts };
+  return { push, snapshot, reset, acceptBaseline, options: opts };
 }
 
 module.exports = {
