@@ -384,17 +384,6 @@ function refreshGuide() {
   state.guide = next;
 }
 
-// Debug: one line per second in the terminal log, naming the check that
-// blocks the calm minute (framing, missing, range, unstable, confidence).
-let lastLogMs = 0;
-function logReading(reading, snap) {
-  const now = Date.now();
-  if (now - lastLogMs < 1000) return;
-  lastLogMs = now;
-  const p = typeof reading.pulse === 'number' ? Math.round(reading.pulse) : 'none';
-  console.log(`[twenty] reading phase=${snap.phase} blocked=${snap.pauseReason || 'ok'} pulse=${p} conf=${reading.confidence} stable=${reading.stable} framingOk=${reading.framingOk} validation=${reading.validationCode} calmMs=${Math.round(snap.baselineMs || 0)}`);
-}
-
 function onReading(reading) {
   state.reading = reading;
   if (state.breakOn) {
@@ -411,7 +400,6 @@ function onReading(reading) {
     framingOk: reading.framingOk,
   });
   state.snap = snap;
-  logReading(reading, snap);
   if (snap.restartedBaseline) {
     if (snap.restartReason === 'high') {
       const bpm = snap.lastRejectedMedian != null ? Math.round(snap.lastRejectedMedian) : null;
