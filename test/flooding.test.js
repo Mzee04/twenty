@@ -300,3 +300,25 @@ test('acceptBaseline without a rejected median stays in baselining', () => {
   assert.equal(snap.phase, 'baselining');
   assert.equal(snap.baseline, null);
 });
+
+test('SDK warm-up with no pulse does not report an interrupted calm reading', () => {
+  const d = createFloodingDetector({ baselineMs: 30000 });
+  let snap;
+  for (let t = 0; t <= 25000; t += 500) {
+    snap = d.push({ tMs: t, framingOk: true });
+    assert.equal(snap.restartedBaseline, false);
+  }
+  snap = d.push({ tMs: 25500, framingOk: true, pulse: 72, stable: true, confidence: 90 });
+  assert.equal(snap.restartedBaseline, false);
+  assert.equal(snap.phase, 'baselining');
+});
+
+test('a long drop after real samples still restarts the calm reading', () => {
+  const d = createFloodingDetector({ baselineMs: 30000 });
+  for (let t = 0; t <= 5000; t += 500) d.push({ tMs: t, framingOk: true, pulse: 72, stable: true, confidence: 90 });
+  let restarted = false;
+  for (let t = 5500; t <= 25000; t += 500) {
+    if (d.push({ tMs: t, framingOk: true }).restartReason === 'pause') restarted = true;
+  }
+  assert.equal(restarted, true);
+});

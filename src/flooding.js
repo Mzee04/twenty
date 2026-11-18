@@ -113,6 +113,9 @@ function createFloodingDetector(options = {}) {
       elevatedMs = 0;
     }
     if (phase === 'baselining' && pauseMs > opts.maxBaselinePauseMs) {
+      pauseMs = 0;
+      // Nothing collected yet (SDK warm-up): keep waiting, nothing to restart.
+      if (baselineSamples.length === 0) return false;
       clearBaselineCollection();
       pauseMs = 0;
       restartReason = 'pause';
@@ -201,9 +204,11 @@ function createFloodingDetector(options = {}) {
     if (dt > opts.maxGapMs) {
       pauseMs = 0;
       if (phase === 'baselining') {
-        clearBaselineCollection();
-        restarted = true;
-        restartReason = 'gap';
+        if (baselineSamples.length > 0) {
+          clearBaselineCollection();
+          restarted = true;
+          restartReason = 'gap';
+        }
       } else if (!flooded) {
         elevatedMs = 0;
         clearMs = 0;
