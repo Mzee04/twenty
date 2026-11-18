@@ -45,7 +45,7 @@
           <h2>Stays here</h2>
           <ul>
             <li>The camera image. It is not recorded and not uploaded.</li>
-            <li>Pulse, breathing, and the calm minute Twenty uses as your own reference.</li>
+            <li>Pulse, breathing, and the calm reading Twenty uses as your own reference.</li>
             <li>Which screen asked for the break. The other person is not told.</li>
           </ul>
         </article>
@@ -64,7 +64,7 @@
       <p>The measurement library is Presage SmartSpectra, running on this computer. It reads the camera here and estimates pulse and breathing here. Twenty turns off the library’s extra diagnostic reports. Twenty does not use Presage’s question feature, which would send a question and the measurements off this computer. The library still sends your API key to Presage so it is allowed to run. Presage’s documentation says that check is not an upload of the video or the numbers. Practice mode, with no key, does not start the library at all.</p>
       <p>The room connection is not an AI service. By default it stays on this computer. It receives the room code, a random connection id that the other person is not shown, and yes or no for a break and for “I’m ready.” It does not receive pulse, breathing, or video.</p>
       <h2>What is saved, and for how long</h2>
-      <p>Frames, pulse, breathing, and your calm minute stay in memory. They are not written to a file. Quit the app, or leave the room, and they are gone. If you paste an API key into the app, it is saved in this Mac’s private settings for Twenty until you remove it. If you put the key in a <code>.env</code> file yourself, it stays in that file until you delete the file. The room connection keeps the room code and the yes/no answers in memory only, and drops them when the last person leaves.</p>
+      <p>Frames, pulse, breathing, and your calm reading stay in memory. They are not written to a file. Quit the app, or leave the room, and they are gone. If you paste an API key into the app, it is saved in this Mac’s private settings for Twenty until you remove it. If you put the key in a <code>.env</code> file yourself, it stays in that file until you delete the file. The room connection keeps the room code and the yes/no answers in memory only, and drops them when the last person leaves.</p>
       <h2>How to opt out</h2>
       <p>Close this window now and the camera never starts. After you continue, Stop camera and Leave room are on screen. Do not enter a shared room address if you want the room code to stay on this computer. Remove the saved key, or delete <code>.env</code>, to stop the Presage check. There is no switch that turns telemetry or an AI feature on. Twenty never turns them on.</p>
       <p class="fine" id="key-line">No API key is loaded. You can still walk the screens with practice signals, or paste a key on the next screen. The key is not shown again.</p>
@@ -136,7 +136,7 @@
           </div>
           <div class="actions">
             <button id="timeout" type="button">Timeout</button>
-            <button id="accept-baseline" type="button" class="secondary" hidden>Use this minute anyway</button>
+            <button id="accept-baseline" type="button" class="secondary" hidden>Use this reading anyway</button>
             <button id="start-again" type="button" class="text" hidden>Start again</button>
             <button id="ready" type="button" hidden>I'm ready</button>
             <button id="partner-ready" type="button" class="secondary" hidden>Mark demo partner ready</button>

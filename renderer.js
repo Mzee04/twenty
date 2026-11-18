@@ -404,10 +404,10 @@ function onReading(reading) {
     if (snap.restartReason === 'high') {
       const bpm = snap.lastRejectedMedian != null ? Math.round(snap.lastRejectedMedian) : null;
       state.note = bpm
-        ? `That minute sat around ${bpm} BPM, which Twenty treats as already high (96 or above), so it was not kept as a calm reference. You can use this minute anyway, start again, or call a timeout.`
-        : 'That minute was already quite high, so it was not kept as a calm reference. You can use this minute anyway, start again, or call a timeout.';
+        ? `That calm reading sat around ${bpm} BPM, which Twenty treats as already high (96 or above), so it was not kept as a calm reference. You can use it anyway, start again, or call a timeout.`
+        : 'That calm reading was already quite high, so it was not kept as a calm reference. You can use it anyway, start again, or call a timeout.';
     } else if (snap.restartReason === 'gap' || snap.restartReason === 'pause') {
-      state.note = 'The calm minute was interrupted, so it is starting over. You can call a timeout any time.';
+      state.note = 'The calm reading was interrupted, so it is starting over. You can call a timeout any time.';
     }
   } else if (snap.phase === 'listening') {
     state.note = '';

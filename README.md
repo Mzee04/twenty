@@ -163,10 +163,10 @@ The pause cue runs on each machine. Pulse and breathing never enter the relay. S
 SmartSpectra's pulse is a 12-second average, valid from 40 to 110 BPM, and the model card does not list talking as a failure (breathing does). Twenty uses pulse for the cue.
 
 - About 30 seconds of confident, in-frame samples set a baseline. The SDK sends some breathing-only updates with no pulse in them; Twenty holds the last real pulse for up to 3 seconds so those updates do not pause the baseline. The baseline is the median.
-- A minute whose median is already near 100 is discarded and started over. It is not a calm reference.
+- A calm reading whose median is already near 100 is discarded and started over. It is not a calm reference.
 - After that, the cue fires when a confident pulse stays at or above the baseline plus 15 BPM, or at or above 96 BPM, for 20 seconds.
 - Confidence is the SDK's 0–100 scale. Twenty acts at 60 or higher, and only when `stable` is true. Early zeros, while the 12-second window fills, do not count.
-- Framing and lighting codes pause the clock. Chest-not-visible does not, because that code is about breathing. A pause longer than about 5 seconds drops a half-built 20-second stretch. A pause longer than about 15 seconds restarts the calm minute.
+- Framing and lighting codes pause the clock. Chest-not-visible does not, because that code is about breathing. A pause longer than about 5 seconds drops a half-built 20-second stretch. A pause longer than about 15 seconds restarts the calm reading.
 - After a cue, it clears only after confident readings sit a few BPM under both lines for 10 seconds. The room itself stays in the break until the relay says so.
 - Readings outside 40–110 are ignored.
 

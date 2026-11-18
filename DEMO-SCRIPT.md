@@ -43,7 +43,7 @@ Turn your face out of frame for a moment. The hint and the **Paused** dot should
 Either:
 
 - Press **Timeout** on one machine, or
-- In solo demo, wait until the simulated partner’s trace holds high. That is a calm minute, then a rise, then about twenty seconds. Roughly two minutes all together. You can cut the wait and come back as the color changes.
+- In solo demo, wait until the simulated partner’s trace holds high. That is a calm reading, then a rise, then about twenty seconds. Roughly two minutes all together. You can cut the wait and come back as the color changes.
 
 When both screens (or the one demo screen) change:
 
